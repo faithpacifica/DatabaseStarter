@@ -1,8 +1,9 @@
 "use client";
 
+import { createProduct } from "@/lib/actions/products";
 import ImageSelect from "./ImageSelect";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { PlusIcon } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
@@ -37,10 +38,15 @@ export default function AddProduct({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("electronics");
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    console.log({ name, category, images, description, price });
-  };
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  try {
+    await createProduct({ name, category, description, price, images });
+  } catch (error) {
+    // show some toast or alert to the user
+    console.error("Error creating product:", error);
+  }
+};
 
   return (
     <div className="grid min-h-screen w-full max-w-4xl mx-auto px-4 md:px-6 py-20 md:py-24 gap-8">
