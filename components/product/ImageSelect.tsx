@@ -6,13 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-export default function ImageSelect({
-  onChange,
-}: {
+
+interface ImageSelectProps {
   onChange: (value: string[]) => void;
-}) {
+}
+
+export default function ImageSelect({onChange}: ImageSelectProps) {
   const [numImages, setNumImages] = useState(1);
   const [images, setImages] = useState<string[]>([]);
+
   const handleAddImage = () => {
     setNumImages(numImages + 1);
   };
@@ -34,12 +36,12 @@ export default function ImageSelect({
   return (
     <div className="grid gap-2">
       <Label>Images</Label>
-      <div className="grid gap-4  ">
+      <div className="grid gap-4">
         {[...Array(numImages)].map((_, index) => (
           <div key={index} className="flex gap-x-4">
             <Input
               placeholder={`Image URL ${index + 1}`}
-              value={images[index]}
+              value={images[index] ?? ''}
               onChange={(e) => handleImageChange(index, e.target.value)}
             />
             <Button

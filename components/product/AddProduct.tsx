@@ -1,11 +1,11 @@
 "use client";
 
-import { createProduct } from "@/lib/actions/products";
 import ImageSelect from "./ImageSelect";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { PlusIcon } from "lucide-react";
 
+import { createProduct } from "@/lib/actions/products";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,15 +38,23 @@ export default function AddProduct({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("electronics");
 
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  try {
-    await createProduct({ name, category, description, price, images });
-  } catch (error) {
-    // show some toast or alert to the user
-    console.error("Error creating product:", error);
-  }
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createProduct({
+        name,
+        category,
+        description,
+        price,
+        images,
+      });
+
+      console.log(name,category, description, price, images);
+    } catch (error) {
+      // show some toast or alert to the user
+      console.error("Error creating product:", error);
+    }
+  };
 
   return (
     <div className="grid min-h-screen w-full max-w-4xl mx-auto px-4 md:px-6 py-20 md:py-24 gap-8">
@@ -66,6 +74,7 @@ const handleSubmit = async (e: FormEvent) => {
                 placeholder="Product Name"
               />
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="category">Category</Label>
               <Select

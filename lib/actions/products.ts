@@ -1,5 +1,7 @@
 // Let's start by creating a new server action that will allow us to create a new Product in the database. We will create a new file called products.ts in the lib/actions directory.
 // import our generated Prisma Client
+
+"use server";
 import { prisma } from "@/lib/prisma";
 
 //
