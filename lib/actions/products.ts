@@ -1,4 +1,4 @@
-// Let's start by creating a new server action that will allow us to create a new Product in the database. We will create a new file called products.ts in the lib/actions directory.
+// start by creating a new server action that will allow us to create a new Product in the database. We will create a new file called products.ts in the lib/actions directory.
 // import our generated Prisma Client
 
 "use server";
@@ -32,4 +32,18 @@ export async function createProduct(product: CreateProductInput) {
     console.error("Error creating product:", error);
     throw new Error("Error creating product");
   }
+}
+
+// read a Product from the database
+
+export async function getProductById(id:number) {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+    return product;
+  } catch (error) {
+    return null;
+  }
+  
 }

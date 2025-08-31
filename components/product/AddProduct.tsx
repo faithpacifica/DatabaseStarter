@@ -3,7 +3,6 @@
 import ImageSelect from "./ImageSelect";
 
 import { useState } from "react";
-import { PlusIcon } from "lucide-react";
 
 import { createProduct } from "@/lib/actions/products";
 import { Label } from "@/components/ui/label";
