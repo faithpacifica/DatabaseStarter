@@ -21,21 +21,29 @@ export default async function Page({ params }: { params: { path: string[] } }) {
     return <DeleteProduct id={id} />;
   }
 
-// Removed duplicate getProductById function definition
+  const product = await getProductById(parseInt(id));
+
+  if (!product) {
+    return <div>Product not found</div>;
+  }
+
   return (
     <div className="pt-20 grid md:grid-cols-2 gap-8 max-w-6xl mx-auto py-12 px-4">
       <Product product={product} />
       <div className="flex flex-col gap-y-5">
         <span className="text-2xl font-bold h-fit">Customer Reviews</span>
         <div className="grid gap-5">
-          <Review />
-          <Review />
-          <Review />
-          <Review />
+          {/*
+            map over reviews and send the review
+            from our database to the Review component
+          */}
+          {product.reviews.map((review) => (
+            <Review key={review.id} review={review} />
+          ))}
         </div>
       </div>
       <div className="md:col-span-2">
-        <AddReview />
+        <AddReview id={parseInt(id)} />
       </div>
     </div>
   );
