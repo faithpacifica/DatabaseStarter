@@ -2,24 +2,14 @@ import Stars from "../Stars";
 import { Card, CardContent } from "../../ui/card";
 // import the type from the Prisma client
 
-// If Review is a model in your Prisma schema, use:
-import type { Review } from "@prisma/client";
-
-// If not, define your own type:
-// type Review = {
-//   id: string;
-//   name: string;
-//   rating: number;
-//   content: string;
-// };
-
+import type { Review } from "@/lib/generated/prisma";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Review({ review }: { review: Review }) {
   // grab the initials from the name
   const initials = review.name
     .split(" ")
-    .map((n: any[]) => n[0])
+    .map((n: string) => n[0])
     .join("");
 
   return (

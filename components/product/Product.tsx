@@ -1,13 +1,9 @@
 // import the product type from Prisma
-import { Product } from "@prisma/client";
-
-// import Review and Image types from your models or Prisma client
-import type { Review, Image } from "@prisma/client";
-
+import { Product } from "@/lib/generated/prisma";
+import type { Image, Review } from "@/lib/generated/prisma";
 import Stars from "@/components/product/Stars";
 import ImageDisplay from "@/components/product/ImageDisplay";
 
-// extend the Product type to include images and reviews
 
 export interface ProductViewProps extends Product {
   reviews: Review[];

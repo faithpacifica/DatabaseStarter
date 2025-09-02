@@ -1,10 +1,13 @@
 "use client";
 
-import ImageSelect from "./ImageSelect";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
-import { useState } from "react";
-
+import ImageSelect from "@/components/product/ImageSelect";
+import { Image, Product, Review} from "@/lib/generated/prisma";
 import { createProduct } from "@/lib/actions/products";
+// import { updatedProduct } from "@/lib/actions/products";
+import { updateProduct } from "@/lib/actions/products";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,40 +21,64 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 export const revalidate = 1;
-
+// define the type
+export interface ProductEditProps extends Product {
+  id: number;
+  reviews: Review[];
+  images: Image[];
+}
+// include the product data as a prop
 export default function AddProduct({
   edit,
   id,
+  product,
 }: {
   edit?: boolean;
   id?: string;
-}) {
+  product?: ProductEditProps;
+})  {
   const title = edit ? "Edit Product " + id : "Add Product";
   const subText = edit
     ? "Update the details of your product here."
     : "Add a new product to your store.";
 
-  const [images, setImages] = useState<string[]>([]);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("electronics");
+  const [name, setName] = useState(product?.name ?? "");
+  const [price, setPrice] = useState(product?.price ?? 0);
+  const [description, setDescription] = useState(product?.description ?? "");
+  const [category, setCategory] = useState(product?.category ?? "");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [images, setImages] = useState<string[]>(
+    product?.images.map((i) => i.url) || []
+  );
+  const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      await createProduct({
+    // if the method is 'edit', update the product
+    if (edit && product) {
+      const updated = await updateProduct(product.id, {
         name,
-        category,
-        description,
         price,
+        description,
+        category,
         images,
       });
-
-      console.log(name,category, description, price, images);
-    } catch (error) {
-      // show some toast or alert to the user
-      console.error("Error creating product:", error);
+      if (updated) {
+        // redirect the user back to the product page
+        router.push(`/product/view/${updated.id}`);
+      }
+    } else {
+      // else, create a new product
+      const newProduct = await createProduct({
+        name,
+        price,
+        description,
+        category,
+        images,
+      });
+      if (newProduct) {
+        router.push(`/product/view/${newProduct.id}`);
+      }
     }
   };
 
