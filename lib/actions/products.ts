@@ -75,3 +75,16 @@ export async function updateProduct(id: number, product: CreateProductInput) {
     return null;
   }
 }
+
+export async function deleteProduct(id: number) {
+  try {
+    await prisma.product.delete({
+      where: {
+        id: id,
+      },
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
