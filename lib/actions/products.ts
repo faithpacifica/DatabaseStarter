@@ -2,9 +2,10 @@
 // import our generated Prisma Client
 
 "use server";
+import { revalidateTag, unstable_cache } from "next/cache";
+
 import { prisma } from "@/lib/prisma";
 
-//
 interface CreateProductInput {
   name: string;
   description: string;
@@ -13,7 +14,7 @@ interface CreateProductInput {
   // update our type to accept an array of image URLs
   images?: string[];
 }
-//
+
 export async function createProduct(product: CreateProductInput) {
   try {
     const newProduct = await prisma.product.create({
@@ -36,7 +37,7 @@ export async function createProduct(product: CreateProductInput) {
 
 // read a Product from the database
 
-export async function getProductById(id: number) {
+async function _getProductById(id: number) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
@@ -50,6 +51,11 @@ export async function getProductById(id: number) {
     return null;
   }
 }
+
+export const getProductById = unstable_cache(_getProductById, ["getProductById"], {
+  tags: ["Product"],
+  revalidate: 60, // Re-fetch the data every 60 seconds
+});
 
 // Update a Product server action.- the update is a bit of a combination of the create and read operations. You need to find the record first, then update the data.
 export async function updateProduct(id: number, product: CreateProductInput) {
@@ -70,6 +76,9 @@ export async function updateProduct(id: number, product: CreateProductInput) {
         },
       },
     });
+
+    // Mark the data as stale, and re-fetch it from the database
+    revalidateTag("Product");
     return updatedProduct;
   } catch (error) {
     return null;
@@ -83,6 +92,9 @@ export async function deleteProduct(id: number) {
         id: id,
       },
     });
+
+    // Mark the data as stale, and re-fetch it from the database
+    revalidateTag("Product");
     return true;
   } catch (error) {
     return false;
