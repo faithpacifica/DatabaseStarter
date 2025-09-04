@@ -1,8 +1,9 @@
+"use server"
+
 import { revalidateTag } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 
-("use server");
 
 interface CreateReviewInput {
   name: string;

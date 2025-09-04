@@ -100,3 +100,32 @@ export async function deleteProduct(id: number) {
     return false;
   }
 }
+
+export async function getProducts({ page = 1 }) {
+  const resultsPerPage = 5;
+  const skip = (page - 1) * resultsPerPage;
+
+  try {
+    const allProducts = await prisma.product.findMany({
+      include: {
+        images: true,
+        reviews: true,
+      },
+      skip,
+      take: resultsPerPage,
+    });
+
+    const products = allProducts.map((product) => ({
+      ...product,
+      rating:
+        Math.floor(
+          product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+          product.reviews.length,
+        ) || 0,
+      image: product.images[0]?.url,
+    }));
+    return products;
+  } catch (error) {
+    return [];
+  }
+}
